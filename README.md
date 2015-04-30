@@ -11,8 +11,9 @@ Getting the EMG-data and try to detect the user "defined" pose.
 1. Then you can try "DETECT" !
 
 ## Tips :
-This application make a new file (/sdcard/Myo_compare/compareData.dat) on your Android. If you need a different file path or something, please check the "MyoDataFileReader.class".
+- This application make a new file (/sdcard/Myo_compare/compareData.dat) on your Android. If you need a different file path or something, please check the "MyoDataFileReader.class".
+- Because of the Myo settings, sometimes the Myo kills the Bluetooth connection. You will pay attention to the Myo status LED. If the RED light is flushing, some errors occar on Myo. When you find no blue light at there, select "Good by" from the MENU list and re-try connecting.
 
 ## Reference :
-Thalmic Lab. myo bluetooth protocol : 
+- Thalmic Lab. myo bluetooth protocol : 
 [https://github.com/thalmiclabs/myo-bluetooth]
