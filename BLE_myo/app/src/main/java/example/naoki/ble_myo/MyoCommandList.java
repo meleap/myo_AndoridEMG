@@ -52,4 +52,22 @@ public class MyoCommandList {
 
         return send_bytes_data;
     }
+
+    public byte[] sendUnSleep() {
+        byte command_sleep_mode = (byte) 0x09;
+        byte payload_unlock = (byte) 1;
+        byte never_sleep = (byte) 1;
+        send_bytes_data = new byte[]{command_sleep_mode, payload_unlock, never_sleep};
+
+        return send_bytes_data;
+    }
+
+    public byte[] sendNormalSleep() {
+        byte command_sleep_mode = (byte) 0x09;
+        byte payload_unlock = (byte) 1;
+        byte normal_sleep = (byte) 0;
+        send_bytes_data = new byte[]{command_sleep_mode, payload_unlock, normal_sleep};
+
+        return send_bytes_data;
+    }
 }

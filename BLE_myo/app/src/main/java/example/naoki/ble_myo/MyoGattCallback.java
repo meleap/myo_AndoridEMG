@@ -39,6 +39,8 @@ public class MyoGattCallback extends BluetoothGattCallback {
     private BluetoothGattCharacteristic mCharacteristic_command;
     private BluetoothGattCharacteristic mCharacteristic_emg0;
 
+    private MyoCommandList commandList = new MyoCommandList();
+
     private String TAG = "MyoGatt";
 
     private TextView dataView;
@@ -133,6 +135,8 @@ public class MyoGattCallback extends BluetoothGattCallback {
                 if (mCharacteristic_command == null) {
                 } else {
                     Log.d(TAG, "Find command Characteristic !!");
+                    // set Myo [Never Sleep Mode]
+                    setMyoControlCommand(commandList.sendUnSleep());
                 }
             }
         }
@@ -267,6 +271,8 @@ public class MyoGattCallback extends BluetoothGattCallback {
     }
 
     public void stopCallback() {
+        // Before the closing GATT, set Myo [Normal Sleep Mode].
+        setMyoControlCommand(commandList.sendNormalSleep());
         descriptorWriteQueue = new LinkedList<BluetoothGattDescriptor>();
         readCharacteristicQueue = new LinkedList<BluetoothGattCharacteristic>();
         if (mCharacteristic_command != null) {
