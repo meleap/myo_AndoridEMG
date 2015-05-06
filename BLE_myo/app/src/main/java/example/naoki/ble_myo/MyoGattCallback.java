@@ -58,7 +58,7 @@ public class MyoGattCallback extends BluetoothGattCallback {
         Log.d(TAG, "onConnectionStateChange: " + status + " -> " + newState);
         if (newState == BluetoothProfile.STATE_CONNECTED) {
             // GATT Connected
-            // Srching GATT Service
+            // Searching GATT Service
             gatt.discoverServices();
 
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
@@ -186,7 +186,7 @@ public class MyoGattCallback extends BluetoothGattCallback {
                     Log.d(TAG,"Characteristic String is " + characteristic.toString());
                 }
             } else if (UUID.fromString(MYO_INFO_ID).equals(characteristic.getUuid())) {
-                // Myo Device Infomation
+                // Myo Device Information
                 final byte[] data = characteristic.getValue();
                 if (data != null && data.length > 0) {
                     ByteReader byteReader = new ByteReader();

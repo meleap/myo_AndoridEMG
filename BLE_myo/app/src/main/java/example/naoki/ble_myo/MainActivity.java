@@ -138,7 +138,7 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
 
     public void onClickUnlock(View v) {
         if (mBluetoothGatt == null || !mMyoCallback.setMyoControlCommand(commandList.sendUnLock())) {
-            Log.d(TAG,"False Vibrate");
+            Log.d(TAG,"False UnLock");
         }
     }
 
