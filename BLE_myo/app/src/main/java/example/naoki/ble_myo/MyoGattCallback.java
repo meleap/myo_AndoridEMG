@@ -221,8 +221,9 @@ public class MyoGattCallback extends BluetoothGattCallback {
     @Override
     public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         if (status == BluetoothGatt.GATT_SUCCESS) {
-
-
+            Log.d(TAG, "onCharacteristicWrite success");
+        } else {
+            Log.d(TAG, "onCharacteristicWrite error: " + status);
         }
     }
 
