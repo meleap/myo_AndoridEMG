@@ -156,7 +156,9 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
     }
 
     public void onClickNoEMG(View v) {
-        if (mBluetoothGatt == null || !mMyoCallback.setMyoControlCommand(commandList.sendUnsetData())) {
+        if (mBluetoothGatt == null
+                || !mMyoCallback.setMyoControlCommand(commandList.sendUnsetData())
+                || !mMyoCallback.setMyoControlCommand(commandList.sendNormalSleep())) {
             Log.d(TAG,"False Data Stop");
         }
     }

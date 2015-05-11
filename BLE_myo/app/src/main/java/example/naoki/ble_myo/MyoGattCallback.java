@@ -1,6 +1,5 @@
 package example.naoki.ble_myo;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -10,7 +9,6 @@ import android.bluetooth.BluetoothProfile;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -135,8 +133,6 @@ public class MyoGattCallback extends BluetoothGattCallback {
                 if (mCharacteristic_command == null) {
                 } else {
                     Log.d(TAG, "Find command Characteristic !!");
-                    // set Myo [Never Sleep Mode]
-                    setMyoControlCommand(commandList.sendUnSleep());
                 }
             }
         }
@@ -227,6 +223,8 @@ public class MyoGattCallback extends BluetoothGattCallback {
         }
     }
 
+    long last_send_never_sleep_time_ms = System.currentTimeMillis();
+    final static long NEVER_SLEEP_SEND_TIME = 10000;  // Milli Second
     @Override
     public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
         if (EMG_0_ID.equals(characteristic.getUuid().toString())) {
@@ -250,6 +248,12 @@ public class MyoGattCallback extends BluetoothGattCallback {
                     dataView.setText(callback_msg);
                 }
             });
+
+            if (systemTime_ms > last_send_never_sleep_time_ms + NEVER_SLEEP_SEND_TIME) {
+                // set Myo [Never Sleep Mode]
+                setMyoControlCommand(commandList.sendUnSleep());
+                last_send_never_sleep_time_ms = systemTime_ms;
+            }
 
         }
     }
