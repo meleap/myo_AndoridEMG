@@ -129,7 +129,8 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
                 + ", uuids=" + uuid;
         Log.d("BLEActivity", msg);
 
-        deviceNames.add(device.getName());
+        if (!deviceNames.contains(device.getName()))
+            deviceNames.add(device.getName());
     }
 
     public void scanDevice() {
