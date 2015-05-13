@@ -37,7 +37,7 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
     private String myoName = null;
 
     private ArrayAdapter<String> adapter;
-    private String[] listMembers = new String[LIST_DEVICE_MAX];
+
 
 
     @Override
@@ -51,10 +51,10 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
 
         ListView lv = (ListView) findViewById(R.id.listView1);
 
-        Arrays.fill(listMembers,"-");
+
 
         adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_expandable_list_item_1, listMembers);
+                android.R.layout.simple_expandable_list_item_1, deviceNames);
 
         lv.setAdapter(adapter);
 
@@ -64,6 +64,7 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
                 ListView listView = (ListView) parent;
                 String item = (String) listView.getItemAtPosition(position);
                 if (item.equals("-")) {
+                    // This become useless
                     Toast.makeText(getApplicationContext(), "Check your device & Scan device", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), item + " connect", Toast.LENGTH_SHORT).show();
@@ -128,30 +129,18 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
                 + ", uuids=" + uuid;
         Log.d("BLEActivity", msg);
 
-        deviceNames.add(device.getName());
+        if (!deviceNames.contains(device.getName()))
+            deviceNames.add(device.getName());
     }
 
     public void scanDevice() {
-        deviceNames = new ArrayList<>();
+        deviceNames.clear();
         // Scanning Time out by Handler.
         // The device scanning needs high energy.
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mBluetoothAdapter.stopLeScan(ListActivity.this);
-
-                int item_num = LIST_DEVICE_MAX;
-                if (deviceNames.size()<item_num){
-                    item_num = deviceNames.size();
-                }
-
-                for (int i_item = 0;i_item <item_num;i_item++) {
-                    String device = deviceNames.get(i_item);
-                    if (device == null){
-                        device = "-";
-                    }
-                    listMembers[i_item] = device;
-                }
 
                 adapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "Stop Device Scan", Toast.LENGTH_SHORT).show();
