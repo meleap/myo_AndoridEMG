@@ -63,21 +63,16 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ListView listView = (ListView) parent;
                 String item = (String) listView.getItemAtPosition(position);
-                if (item.equals("-")) {
-                    // This become useless
-                    Toast.makeText(getApplicationContext(), "Check your device & Scan device", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), item + " connect", Toast.LENGTH_SHORT).show();
-                    myoName = item;
+                Toast.makeText(getApplicationContext(), item + " connect", Toast.LENGTH_SHORT).show();
+                myoName = item;
 
-                    Intent intent;
-                    intent = new Intent(getApplicationContext() , MainActivity.class );
+                Intent intent;
+                intent = new Intent(getApplicationContext(), MainActivity.class);
 
-                    intent.putExtra( TAG, myoName );
+                intent.putExtra(TAG, myoName);
 
-                    startActivity(intent);
+                startActivity(intent);
 
-                }
             }
         });
 
@@ -129,8 +124,9 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
                 + ", uuids=" + uuid;
         Log.d("BLEActivity", msg);
 
-        if (!deviceNames.contains(device.getName()))
+        if (device.getName() != null && !deviceNames.contains(device.getName())) {
             deviceNames.add(device.getName());
+        }
     }
 
     public void scanDevice() {
