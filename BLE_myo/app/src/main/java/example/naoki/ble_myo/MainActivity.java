@@ -34,6 +34,9 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
     /** Device Scanning Time (ms) */
     private static final long SCAN_PERIOD = 5000;
 
+    /** Intent code for requesting Bluetooth enable */
+    private static final int REQUEST_ENABLE_BT = 1;
+
     private static final String TAG = "BLE_Myo";
 
     private Handler mHandler;
@@ -70,15 +73,22 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
         deviceName = intent.getStringExtra(ListActivity.TAG);
 
         if (deviceName != null) {
-        // Scanning Time out by Handler.
-        // The device scanning needs high energy.
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mBluetoothAdapter.stopLeScan(MainActivity.this);
-                }
-            }, SCAN_PERIOD);
-            mBluetoothAdapter.startLeScan(this);
+            // Ensures Bluetooth is available on the device and it is enabled. If not,
+            // displays a dialog requesting user permission to enable Bluetooth.
+            if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            } else {
+                // Scanning Time out by Handler.
+                // The device scanning needs high energy.
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBluetoothAdapter.stopLeScan(MainActivity.this);
+                    }
+                }, SCAN_PERIOD);
+                mBluetoothAdapter.startLeScan(this);
+            }
         }
     }
 
