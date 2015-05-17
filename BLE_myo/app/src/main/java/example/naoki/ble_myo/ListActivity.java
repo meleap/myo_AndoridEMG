@@ -30,6 +30,9 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
     /** Device Scanning Time (ms) */
     private static final long SCAN_PERIOD = 5000;
 
+    /** Intent code for requesting Bluetooth enable */
+    private static final int REQUEST_ENABLE_BT = 1;
+
     private Handler mHandler;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt    mBluetoothGatt;
@@ -130,20 +133,27 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
     }
 
     public void scanDevice() {
-        deviceNames.clear();
-        // Scanning Time out by Handler.
-        // The device scanning needs high energy.
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mBluetoothAdapter.stopLeScan(ListActivity.this);
+        // Ensures Bluetooth is available on the device and it is enabled. If not,
+        // displays a dialog requesting user permission to enable Bluetooth.
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else {
+            deviceNames.clear();
+            // Scanning Time out by Handler.
+            // The device scanning needs high energy.
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mBluetoothAdapter.stopLeScan(ListActivity.this);
 
-                adapter.notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), "Stop Device Scan", Toast.LENGTH_SHORT).show();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(getApplicationContext(), "Stop Device Scan", Toast.LENGTH_SHORT).show();
 
-            }
-        }, SCAN_PERIOD);
-        mBluetoothAdapter.startLeScan(ListActivity.this);
+                }
+            }, SCAN_PERIOD);
+            mBluetoothAdapter.startLeScan(ListActivity.this);
+        }
     }
 
 }
