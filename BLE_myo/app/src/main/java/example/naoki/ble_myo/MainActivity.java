@@ -1,6 +1,10 @@
 package example.naoki.ble_myo;
 
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Intent;
+import android.os.ParcelUuid;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,19 +17,9 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothProfile;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattService;
 
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.Queue;
-import java.util.LinkedList;
 
 public class MainActivity extends ActionBarActivity implements BluetoothAdapter.LeScanCallback {
     public static final int MENU_LIST = 0;
@@ -44,6 +38,8 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
     private BluetoothGatt    mBluetoothGatt;
     private TextView         emgDataText;
     private TextView         gestureText;
+    private BluetoothLeScanner mBluetoothScanner;
+    private ScanMyoCallback mCallback;
 
     private MyoGattCallback mMyoCallback;
     private MyoCommandList commandList = new MyoCommandList();
@@ -68,6 +64,9 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
 
         BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
+        mBluetoothScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        mCallback = new ScanMyoCallback();
+
 
         Intent intent = getIntent();
         deviceName = intent.getStringExtra(ListActivity.TAG);
@@ -84,10 +83,10 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mBluetoothAdapter.stopLeScan(MainActivity.this);
+                        mBluetoothScanner.stopScan(mCallback);
                     }
                 }, SCAN_PERIOD);
-                mBluetoothAdapter.startLeScan(this);
+                mBluetoothScanner.startScan(mCallback);
             }
         }
     }
@@ -132,7 +131,7 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
     @Override
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
         if (deviceName.equals(device.getName())) {
-            mBluetoothAdapter.stopLeScan(this);
+            mBluetoothScanner.stopScan(mCallback);
             // Trying to connect GATT
             mMyoCallback = new MyoGattCallback(mHandler, emgDataText);
             mBluetoothGatt = device.connectGatt(this, false, mMyoCallback);
@@ -226,6 +225,21 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
                 gestureText.setText(message);
             }
         });
+    }
+
+    protected class ScanMyoCallback extends ScanCallback {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            super.onScanResult(callbackType, result);
+            BluetoothDevice device = result.getDevice();
+            if (deviceName.equals(device.getName())) {
+                mBluetoothScanner.stopScan(mCallback);
+                // Trying to connect GATT
+                mMyoCallback = new MyoGattCallback(mHandler, emgDataText);
+                mBluetoothGatt = device.connectGatt(MainActivity.this, false, mMyoCallback);
+                mMyoCallback.setBluetoothGatt(mBluetoothGatt);
+            }
+        }
     }
 
 }

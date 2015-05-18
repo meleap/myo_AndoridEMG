@@ -4,6 +4,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,9 +22,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class ListActivity extends ActionBarActivity implements BluetoothAdapter.LeScanCallback {
+public class ListActivity extends ActionBarActivity {
     public static final int MENU_SCAN = 0;
     public static final int LIST_DEVICE_MAX = 5;
 
@@ -36,12 +38,12 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
     private Handler mHandler;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt    mBluetoothGatt;
+    private BluetoothLeScanner mBluetoothScanner;
+    private ScanMyoListCallback mCallback;
     private ArrayList<String> deviceNames = new ArrayList<>();
     private String myoName = null;
 
     private ArrayAdapter<String> adapter;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,9 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
 
         BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
+        mBluetoothScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        mCallback = new ScanMyoListCallback();
+
         mHandler = new Handler();
 
         ListView lv = (ListView) findViewById(R.id.listView1);
@@ -110,28 +115,6 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
         scanDevice();
     }
 
-    @Override
-    public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-    // Device Log
-        ParcelUuid[] uuids = device.getUuids();
-        String uuid = "";
-        if (uuids != null) {
-            for (ParcelUuid puuid : uuids) {
-                uuid += puuid.toString() + " ";
-            }
-        }
-
-        String msg = "name=" + device.getName() + ", bondStatus="
-                + device.getBondState() + ", address="
-                + device.getAddress() + ", type" + device.getType()
-                + ", uuids=" + uuid;
-        Log.d("BLEActivity", msg);
-
-        if (device.getName() != null && !deviceNames.contains(device.getName())) {
-            deviceNames.add(device.getName());
-        }
-    }
-
     public void scanDevice() {
         // Ensures Bluetooth is available on the device and it is enabled. If not,
         // displays a dialog requesting user permission to enable Bluetooth.
@@ -145,15 +128,39 @@ public class ListActivity extends ActionBarActivity implements BluetoothAdapter.
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mBluetoothAdapter.stopLeScan(ListActivity.this);
+                    mBluetoothScanner.stopScan(mCallback);
 
                     adapter.notifyDataSetChanged();
                     Toast.makeText(getApplicationContext(), "Stop Device Scan", Toast.LENGTH_SHORT).show();
 
                 }
             }, SCAN_PERIOD);
-            mBluetoothAdapter.startLeScan(ListActivity.this);
+            mBluetoothScanner.startScan(mCallback);
         }
     }
 
+    protected class ScanMyoListCallback extends ScanCallback {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            super.onScanResult(callbackType, result);
+            BluetoothDevice device = result.getDevice();
+            ParcelUuid[] uuids = device.getUuids();
+            String uuid = "";
+            if (uuids != null) {
+                for (ParcelUuid puuid : uuids) {
+                    uuid += puuid.toString() + " ";
+                }
+            }
+
+            String msg = "name=" + device.getName() + ", bondStatus="
+                    + device.getBondState() + ", address="
+                    + device.getAddress() + ", type" + device.getType()
+                    + ", uuids=" + uuid;
+            Log.d("BLEActivity", msg);
+
+            if (device.getName() != null && !deviceNames.contains(device.getName())) {
+                deviceNames.add(device.getName());
+            }
+        }
+    }
 }
