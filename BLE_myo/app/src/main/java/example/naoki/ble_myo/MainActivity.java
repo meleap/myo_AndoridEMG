@@ -142,7 +142,7 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
 
     public void onClickVibration(View v){
         if (mBluetoothGatt == null || !mMyoCallback.setMyoControlCommand(commandList.sendVibration3())) {
-            Log.d(TAG,"False Vibrate");
+            Log.d(TAG, "False Vibrate");
         }
     }
 
@@ -228,5 +228,18 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK){
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mBluetoothAdapter.stopLeScan(MainActivity.this);
+                }
+            }, SCAN_PERIOD);
+            mBluetoothAdapter.startLeScan(this);
+        }
+    }
 }
 
