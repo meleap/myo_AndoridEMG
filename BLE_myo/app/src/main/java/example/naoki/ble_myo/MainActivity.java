@@ -242,5 +242,19 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == RESULT_OK){
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mBluetoothScanner.stopScan(mCallback);
+                }
+            }, SCAN_PERIOD);
+            mBluetoothScanner.startScan(mCallback);
+        }
+    }
+
 }
 
