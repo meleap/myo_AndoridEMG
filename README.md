@@ -17,3 +17,6 @@ Getting the EMG-data and try to detect the user "defined" pose.
 ## Reference :
 - Thalmic Lab. myo bluetooth protocol : 
 [https://github.com/thalmiclabs/myo-bluetooth]
+
+## License :
+- This software is released under the MIT License, see LICENSE.
