@@ -72,4 +72,94 @@
         android:layout_centerInParent="true"
         android:layout_alignParentEnd="false" />
 
+    <com.echo.holographlibrary.LineGraph
+        android:id="@+id/holo_graph_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/gestureTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/btn_emg2" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="1"
+        android:id="@+id/btn_emg1"
+        android:textSize="10dp"
+        android:layout_below="@+id/holo_graph_view"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="2"
+        android:id="@+id/btn_emg2"
+        android:layout_above="@+id/bSave"
+        android:layout_toEndOf="@+id/btn_emg1"
+        android:textSize="10dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="3"
+        android:id="@+id/btn_emg3"
+        android:layout_alignTop="@+id/btn_emg2"
+        android:layout_toEndOf="@+id/btn_emg2"
+        android:textSize="10dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="4"
+        android:id="@+id/btn_emg4"
+        android:layout_alignTop="@+id/btn_emg3"
+        android:layout_toEndOf="@+id/btn_emg3"
+        android:textSize="10dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="5"
+        android:id="@+id/btn_emg5"
+        android:layout_above="@+id/bDetect"
+        android:layout_toEndOf="@+id/btn_emg4"
+        android:textSize="10dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="6"
+        android:id="@+id/btn_emg6"
+        android:textSize="10dp"
+        android:layout_below="@+id/holo_graph_view"
+        android:layout_toEndOf="@+id/btn_emg5" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="7"
+        android:id="@+id/btn_emg7"
+        android:textSize="10dp"
+        android:layout_below="@+id/holo_graph_view"
+        android:layout_toEndOf="@+id/btn_emg6" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:text="8"
+        android:id="@+id/btn_emg8"
+        android:textSize="10dp"
+        android:layout_above="@+id/bDetect"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/btn_emg7" />
+
 </RelativeLayout>

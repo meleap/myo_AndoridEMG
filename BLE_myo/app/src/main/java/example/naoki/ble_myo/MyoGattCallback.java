@@ -6,10 +6,19 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.echo.holographlibrary.Line;
+import com.echo.holographlibrary.LineGraph;
+import com.echo.holographlibrary.LinePoint;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
@@ -44,10 +53,89 @@ public class MyoGattCallback extends BluetoothGattCallback {
     private TextView dataView;
     private String callback_msg;
     private Handler mHandler;
+    private int[] emgDatas = new int[16];
 
-    public MyoGattCallback(Handler handler, TextView view) {
+    private LineGraph lineGraph;
+    private Button btn_emg1;
+    private Button btn_emg2;
+    private Button btn_emg3;
+    private Button btn_emg4;
+    private Button btn_emg5;
+    private Button btn_emg6;
+    private Button btn_emg7;
+    private Button btn_emg8;
+
+    private int nowGraphIndex = 0;
+    private Button nowButton;
+
+    int[][] dataList1_a = new int[8][50];
+    int[][] dataList1_b = new int[8][50];
+
+    public MyoGattCallback(Handler handler, TextView view, HashMap<String,View> views) {
         mHandler = handler;
         dataView = view;
+        lineGraph = (LineGraph) views.get("graph");
+        btn_emg1 = (Button) views.get("btn1");
+        nowButton = btn_emg1;
+        btn_emg1.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                nowGraphIndex = 0;
+                nowButton = btn_emg1;
+            }});
+        btn_emg2 = (Button) views.get("btn2");
+        btn_emg2.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                nowGraphIndex = 1;
+                nowButton = btn_emg2;
+            }});
+        btn_emg3 = (Button) views.get("btn3");
+        btn_emg3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nowGraphIndex = 2;
+                nowButton = btn_emg3;
+            }
+        });
+        btn_emg4 = (Button) views.get("btn4");
+        btn_emg4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nowGraphIndex = 3;
+                nowButton = btn_emg4;
+            }
+        });
+        btn_emg5 = (Button) views.get("btn5");
+        btn_emg5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nowGraphIndex = 4;
+                nowButton = btn_emg5;
+            }
+        });
+        btn_emg6 = (Button) views.get("btn6");
+        btn_emg6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nowGraphIndex = 5;
+                nowButton = btn_emg6;
+            }
+        });
+        btn_emg7 = (Button) views.get("btn7");
+        btn_emg7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nowGraphIndex = 6;
+                nowButton = btn_emg7;
+            }
+        });
+        btn_emg8 = (Button) views.get("btn8");
+        btn_emg8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nowGraphIndex = 7;
+                nowButton = btn_emg8;
+            }
+        });
     }
 
     @Override
@@ -242,10 +330,66 @@ public class MyoGattCallback extends BluetoothGattCallback {
                     emg_br.getByte(),emg_br.getByte(),emg_br.getByte(),emg_br.getByte(),
                     emg_br.getByte(),emg_br.getByte(),emg_br.getByte(),emg_br.getByte());
 
+            emg_br = new ByteReader();
+            emg_br.setByteData(emg_data);
+            for(int emgInputIndex = 0;emgInputIndex<16;emgInputIndex++) {
+                emgDatas[emgInputIndex] = emg_br.getByte();
+            }
+
+
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     dataView.setText(callback_msg);
+                    lineGraph.removeAllLines();
+
+                    for(int inputIndex = 0;inputIndex<8;inputIndex++) {
+                        dataList1_a[inputIndex][0] = emgDatas[0+inputIndex];
+                        dataList1_b[inputIndex][0] = emgDatas[7+inputIndex];
+                    }
+                    // 折れ線グラフ
+                    int number = 50;
+                    int addNumber = 100;
+                    Line line = new Line();
+                    while (0 < number) {
+                        number--;
+                        addNumber--;
+
+                        //１点目add
+                        if(number != 0){
+                        for(int setDatalistIndex = 0;setDatalistIndex < 8;setDatalistIndex++){
+                            dataList1_a[setDatalistIndex][number] = dataList1_a[setDatalistIndex][number - 1];
+                        }
+                        }
+                        LinePoint linePoint = new LinePoint();
+                        linePoint.setY(dataList1_a[nowGraphIndex][number]); //ランダムで生成した値をSet
+                        linePoint.setX(addNumber); //x軸を１ずつずらしてSet
+                        //linePoint.setColor(Color.parseColor("#9acd32")); // 丸の色をSet
+
+                        line.addPoint(linePoint);
+                        //2点目add
+                        /////number--;
+                        addNumber--;
+                        if(number != 0){
+                            for(int setDatalistIndex = 0;setDatalistIndex < 8;setDatalistIndex++) {
+                                dataList1_b[setDatalistIndex][number] = dataList1_b[setDatalistIndex][number - 1];
+                            }
+                        }
+                        linePoint = new LinePoint();
+                        linePoint.setY(dataList1_b[nowGraphIndex][number]); //ランダムで生成した値をSet
+                        linePoint.setX(addNumber); //x軸を１ずつずらしてSet
+                        //linePoint.setColor(Color.parseColor("#9acd32")); // 丸の色をSet
+
+                        line.addPoint(linePoint);
+                    }
+                    if(nowButton != null) {
+                        //line.setColor(Color.parseColor("#9acd32")); // 線の色をSet
+                        line.setColor(((ColorDrawable)nowButton.getBackground()).getColor()); // 線の色をSet
+                    }
+                    line.setShowingPoints(false);
+                    lineGraph.addLine(line);
+                    lineGraph.setRangeY(-128, 128); // 表示するY軸の最低値・最高値 今回は0から1まで
+                    //graph.setRangeX(0, 100); // 表示するX軸の最低値・最高値　今回は0からデータベースの取得した
                 }
             });
 
@@ -254,7 +398,6 @@ public class MyoGattCallback extends BluetoothGattCallback {
                 setMyoControlCommand(commandList.sendUnSleep());
                 last_send_never_sleep_time_ms = systemTime_ms;
             }
-
         }
     }
 

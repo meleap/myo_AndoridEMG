@@ -1,6 +1,7 @@
 package example.naoki.ble_myo;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,10 +20,16 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.echo.holographlibrary.Line;
+import com.echo.holographlibrary.LineGraph;
+import com.echo.holographlibrary.LinePoint;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.Queue;
 import java.util.LinkedList;
@@ -55,10 +62,42 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
     private GestureDetectModel  detectModel;
     private GestureDetectMethod detectMethod;
 
+    private LineGraph graph;
+    private Button graphButton1;
+    private Button graphButton2;
+    private Button graphButton3;
+    private Button graphButton4;
+    private Button graphButton5;
+    private Button graphButton6;
+    private Button graphButton7;
+    private Button graphButton8;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //ready
+        graph = (LineGraph) findViewById(R.id.holo_graph_view);
+        graphButton1 = (Button) findViewById(R.id.btn_emg1);
+        graphButton2 = (Button) findViewById(R.id.btn_emg2);
+        graphButton3 = (Button) findViewById(R.id.btn_emg3);
+        graphButton4 = (Button) findViewById(R.id.btn_emg4);
+        graphButton5 = (Button) findViewById(R.id.btn_emg5);
+        graphButton6 = (Button) findViewById(R.id.btn_emg6);
+        graphButton7 = (Button) findViewById(R.id.btn_emg7);
+        graphButton8 = (Button) findViewById(R.id.btn_emg8);
+
+
+        //set color
+        graphButton1.setBackgroundColor(Color.argb(0x66, 0xff, 0, 0xff));
+        graphButton2.setBackgroundColor(Color.argb(0x66, 0xff, 0x00, 0x00));
+        graphButton3.setBackgroundColor(Color.argb(0x66, 0x66, 0x33, 0xff));
+        graphButton4.setBackgroundColor(Color.argb(0x66, 0xff, 0x66, 0x33));
+        graphButton5.setBackgroundColor(Color.argb(0x66, 0xff, 0x33, 0x66));
+        graphButton6.setBackgroundColor(Color.argb(0x66, 0x00, 0x33, 0xff));
+        graphButton7.setBackgroundColor(Color.argb(0x66, 0x00, 0x33, 0x33));
+        graphButton8.setBackgroundColor(Color.argb(0x66, 0x66, 0xcc, 0x66));
 
         emgDataText = (TextView)findViewById(R.id.emgDataTextView);
         gestureText = (TextView)findViewById(R.id.gestureTextView);
@@ -134,7 +173,21 @@ public class MainActivity extends ActionBarActivity implements BluetoothAdapter.
         if (deviceName.equals(device.getName())) {
             mBluetoothAdapter.stopLeScan(this);
             // Trying to connect GATT
-            mMyoCallback = new MyoGattCallback(mHandler, emgDataText);
+            HashMap<String,View> views = new HashMap<String,View>();
+            //put GraphView
+            views.put("graph",graph);
+            //put Button1〜8
+
+            views.put("btn1",graphButton1);
+            views.put("btn2",graphButton2);
+            views.put("btn3",graphButton3);
+            views.put("btn4",graphButton4);
+            views.put("btn5",graphButton5);
+            views.put("btn6",graphButton6);
+            views.put("btn7",graphButton7);
+            views.put("btn8",graphButton8);
+
+            mMyoCallback = new MyoGattCallback(mHandler, emgDataText, views);
             mBluetoothGatt = device.connectGatt(this, false, mMyoCallback);
             mMyoCallback.setBluetoothGatt(mBluetoothGatt);
         }
