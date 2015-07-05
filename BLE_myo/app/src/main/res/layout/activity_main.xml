@@ -29,12 +29,12 @@
         android:text="Myo Status"
         android:id="@+id/emgDataTextView"
         android:textSize="15dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="26dp"
         android:layout_marginRight="20dp"
-        android:background="@android:drawable/editbox_dropdown_light_frame" />
+        android:background="@android:drawable/editbox_dropdown_light_frame"
+        android:layout_below="@+id/bVibrate"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -69,8 +69,9 @@
         android:text="Gesture"
         android:id="@+id/gestureTextView"
         android:textSize="25dp"
-        android:layout_centerInParent="true"
-        android:layout_alignParentEnd="false" />
+        android:layout_below="@+id/bVibrate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp" />
 
     <com.echo.holographlibrary.LineGraph
         android:id="@+id/holo_graph_view"
